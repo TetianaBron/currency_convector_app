@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import CurrencyRow from './CurrencyRow';
 
-const BASE_URL = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5';
+const BASE_URL =
+  'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5';
 
 function App() {
   const [currencyOptions, setCurrencyOptions] = useState([]);
@@ -24,20 +25,22 @@ function App() {
     } else if (fromCurrency === 'UAH') {
       toAmount = Math.round((amount / saleExchangeRate) * 100) / 100;
     } else if (fromCurrency !== 'UAH' && toCurrency === 'UAH') {
-      toAmount = Math.round((amount * buyExchangeRate) * 100) / 100; 
+      toAmount = Math.round(amount * buyExchangeRate * 100) / 100;
     } else {
-      toAmount = Math.round((amount * buyExchangeRate / saleExchangeRate) * 100) / 100; 
+      toAmount =
+        Math.round(((amount * buyExchangeRate) / saleExchangeRate) * 100) / 100;
     }
   } else {
     toAmount = amount;
     if (toCurrency === fromCurrency) {
       fromAmount = amount;
     } else if (fromCurrency === 'UAH') {
-      fromAmount = Math.round((amount * saleExchangeRate) * 100) / 100;
-    } else if (fromCurrency !== 'UAH' && toCurrency === 'UAH') { 
-      fromAmount = Math.round((amount / buyExchangeRate) * 100) / 100; 
+      fromAmount = Math.round(amount * saleExchangeRate * 100) / 100;
+    } else if (fromCurrency !== 'UAH' && toCurrency === 'UAH') {
+      fromAmount = Math.round((amount / buyExchangeRate) * 100) / 100;
     } else {
-      fromAmount = Math.round((amount / buyExchangeRate * saleExchangeRate) * 100) / 100; 
+      fromAmount =
+        Math.round((amount / buyExchangeRate) * saleExchangeRate * 100) / 100;
     }
   }
 
@@ -62,42 +65,44 @@ function App() {
         setCurrencyOptions(currencies);
         setFromCurrency(firstCurrency);
         setToCurrency(currencies[1]);
-      })
+      });
   }, []);
 
   //from when we are changing toCurrency or fromCurrency selects)
   useEffect(() => {
     if (toCurrency && fromCurrency) {
       fetch(BASE_URL)
-      .then(res => res.json())
-      .then(data => {
-        if (fromCurrency === toCurrency) {
-          return;
-        }
-        //from UAH to another currency (when we are changing toCurrency select)
-        if (fromCurrency === 'UAH') {
-          const item = data.find(item => item.ccy === toCurrency);
-          const saleExchangeRateOfToCurrency = item.sale;
-          setSaleExchangeRate(saleExchangeRateOfToCurrency);
-        } else if (fromCurrency !== 'UAH' && toCurrency === 'UAH') {
-          //from different currency (NOT UAH) to UAH
-          const item = data.find(item => item.ccy === fromCurrency);
-          const buyExchangeRateOfToCurrency = item.buy;
-          setBuyExchangeRate(buyExchangeRateOfToCurrency);
-        } else {
-          //from Not-UAH to Not-UAH
-          const itemFromCurrency = data.find(item => item.ccy === fromCurrency)
-          const buyExchangeRateOfToCurrency = itemFromCurrency.buy;
-          setBuyExchangeRate(buyExchangeRateOfToCurrency);
-          const itemToCurrency = data.find(item => item.ccy === toCurrency);
-          const saleExchangeRateOfToCurrency = itemToCurrency.sale;
-          setSaleExchangeRate(saleExchangeRateOfToCurrency);
-        }
-      })
+        .then(res => res.json())
+        .then(data => {
+          if (fromCurrency === toCurrency) {
+            return;
+          }
+          //from UAH to another currency (when we are changing toCurrency select)
+          if (fromCurrency === 'UAH') {
+            const item = data.find(item => item.ccy === toCurrency);
+            const saleExchangeRateOfToCurrency = item.sale;
+            setSaleExchangeRate(saleExchangeRateOfToCurrency);
+          } else if (fromCurrency !== 'UAH' && toCurrency === 'UAH') {
+            //from different currency (NOT UAH) to UAH
+            const item = data.find(item => item.ccy === fromCurrency);
+            const buyExchangeRateOfToCurrency = item.buy;
+            setBuyExchangeRate(buyExchangeRateOfToCurrency);
+          } else {
+            //from Not-UAH to Not-UAH
+            const itemFromCurrency = data.find(
+              item => item.ccy === fromCurrency,
+            );
+            const buyExchangeRateOfToCurrency = itemFromCurrency.buy;
+            setBuyExchangeRate(buyExchangeRateOfToCurrency);
+            const itemToCurrency = data.find(item => item.ccy === toCurrency);
+            const saleExchangeRateOfToCurrency = itemToCurrency.sale;
+            setSaleExchangeRate(saleExchangeRateOfToCurrency);
+          }
+        });
     }
   }, [toCurrency, fromCurrency]);
 
-  function handleFromAmountChange(e){
+  function handleFromAmountChange(e) {
     setAmount(e.target.value);
     setAmountInFromCurrency(true);
   }
@@ -108,7 +113,6 @@ function App() {
   }
 
   return (
-    
     <>
       <h1>Convert</h1>
       <p>Продаю</p>
@@ -128,10 +132,8 @@ function App() {
         onChangeAmount={handleToAmountChange}
         amount={toAmount}
       />
-        
     </>
   );
-    
 }
 
 export default App;
